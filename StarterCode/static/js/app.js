@@ -23,19 +23,18 @@ d3.json(url).then(function(data) {
   
   // Select the input value from the form
 
-selDat.on("change", function(){
-  d3.event.preventDefault();
-  var idCapture = this.value
-  })
+// selDat.on("change", function(){
+//   d3.event.preventDefault();
+//   var idCapture = this.value
+//   })
 
 
-function getId() {
-  selDat.on("change", function(){
-    d3.event.preventDefault();
-    var idCapture = this.value
-    })  
-}
-
+  /*selDat.on("change", function(){
+    
+    buildDiagram(),
+    buildCircle()
+    })
+*/
   // clear the input value
   // d3.select("#stockInput").node().value = "";
 
@@ -45,60 +44,69 @@ function getId() {
 
 
 // function get all will capture everything
-function buildCircle() {
+function buildCircle(sample) {
+  // selDat.on("change", function(){
+    // d3.event.preventDefault();
+    var idCapture = sample
     
+
     d3.json(url).then(function(data) {
-        var idNames = data.names
-        getId()
-        var idNum = idNames.findIndex( x => x == idCapture )
-        var otuIdRaw = data["samples"][idNum]["otu_ids"]
-        var otuidMapped = otuIdRaw.map( otu => "OTU " + String(otu) )
-        // var otuIds = otuIdSorted.slice(otuIdSorted.length -10, otuIdSorted.length  )
-        var otuLabels = data["samples"][idNum]["otu_labels"]
-        var sampleValues = data["samples"][idNum]["sample_values"]
-        // console.log(otuidMapped)
+      var idNames = data.names      
+      var idNum = idNames.findIndex( x => x == idCapture )
+      var otuIdRaw = data["samples"][idNum]["otu_ids"]
+      var otuidMapped = otuIdRaw.map( otu => "OTU " + String(otu) )
+      // var otuIds = otuIdSorted.slice(otuIdSorted.length -10, otuIdSorted.length  )
+      var otuLabels = data["samples"][idNum]["otu_labels"]
+      var sampleValues = data["samples"][idNum]["sample_values"]
+      // console.log(otuidMapped)
 
-        // Print the names of the columns
-        // console.log(sampleValues)
-
+      // Print the names of the columns
+      // console.log(sampleValues)
 
 
-      var trace2 = {
-        x: otuIdRaw,
-        y: sampleValues,
-        mode: 'markers',
-        text: otuLabels,
-        marker: {
-          color: ['rgb(93, 164, 214)', 'rgb(255, 144, 14)',  'rgb(44, 160, 101)', 'rgb(255, 65, 54)','rgb(30, 5, 57)'],
-          opacity: [1, 0.8, 0.6, 0.4],
-          size: sampleValues,
-          
-        }
-      };
-    ;
+
+    var trace2 = {
+      x: otuIdRaw,
+      y: sampleValues,
+      mode: 'markers',
+      text: otuLabels,
+      marker: {
+        color: ['rgb(93, 164, 214)', 'rgb(255, 144, 14)',  'rgb(44, 160, 101)', 'rgb(255, 65, 54)','rgb(30, 5, 57)'],
+        opacity: [1, 0.8, 0.6, 0.4],
+        size: sampleValues,
+        
+      }
+    };
+  
+  var data2 = [trace2];
+
+  var layout2 = {
+    title: 'Bubble Chart',
+    showlegend: false,
+    height: 600,
+    width: 600
+  };
+
+  // Plotly.newPlot('bar', data);
+  Plotly.newPlot('bubble', data2, layout2);
+  })    
+    // }     )
     
 
-    var data2 = [trace2];
 
-var layout2 = {
-  title: 'Bubble Chart',
-  showlegend: false,
-  height: 600,
-  width: 600
-};
-
-    // Plotly.newPlot('bar', data);
-    Plotly.newPlot('bubble', data2, layout2);
-    })
+    
 }
 
 // function get all will capture everything
-function buildDiagram() {
-    
+function buildDiagram(sample) {
+    // d3.event.preventDefault();
+    var idCapture = sample 
+
+
   d3.json(url).then(function(data) {
     // create object containing only 
     var idNames = data.names
-    var idNum = 0
+    var idNum = idNames.findIndex( x => x == idCapture )
     var otuIdRaw = data["samples"][idNum]["otu_ids"]
     var otuidMapped = otuIdRaw.map( otu => "OTU " + String(otu) )
     var sampleValues = data["samples"][idNum]["sample_values"]
@@ -139,26 +147,27 @@ function buildDiagram() {
 
 
   
-  var data =[trace1]
+  var data1 =[trace1]
 
 
-var layout2 = {
-title: 'Bubble Chart',
-showlegend: false,
-height: 600,
-width: 600
-};
+  var layout2 = {
+  title: 'Bubble Chart',
+  showlegend: false,
+  height: 600,
+  width: 600
+  };
 
-  Plotly.newPlot('bar', data);
-
-  })
-}
-
-function buildCard() {
+    Plotly.newPlot('bar', data1);
     
+    })
+  }
+
+function buildCard(sample) {
+  var idCapture = sample
+
   d3.json(url).then(function(data) {
       var idNames = data.names
-      var idNum = 0
+      var idNum = idNames.findIndex( x => x == idCapture )
       var id = data.metadata[idNum]["id"]
       var ethnicity = data.metadata[idNum]["ethnicity"]
       var gender = data.metadata[idNum]["gender"]
@@ -177,15 +186,16 @@ function buildCard() {
       sampleBody.append('div').text(`location: ${location}`)
       sampleBody.append('div').text(`bbtype: ${bbtype}`)
       sampleBody.append('div').text(`wfreq: ${wfreq}`)
-  })
+    
+    })
 }
 
 
 
 
-buildCircle()
-buildCard()
-buildDiagram()
+// buildCircle()
+// buildCard()
+// buildDiagram()
 
 
     // function get specific will capture everything
@@ -223,4 +233,8 @@ buildDiagram()
 //     Plotly.newPlot("pie", data, layout);
 //   }
 
-
+function optionChanged(sampleData){
+  buildCircle(sampleData)
+  buildDiagram(sampleData)
+  buildCard(sampleData)
+}
